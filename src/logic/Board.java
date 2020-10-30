@@ -7,9 +7,11 @@ public class Board {
 	//public ArrayList [] board;
 	public char [][] board;
 	private final int MAX = 6;
+	public int [] pieces;
 	
 	public Board() {
 		board = new char[6][7];
+		pieces = new int[7];
 		initBoard();
 	}
 	
@@ -29,9 +31,14 @@ public class Board {
 		int index;
 		if((index = getColumnIndex(column)) != -1) {
 			board[index][column] = name;
+			pieces[column]++;
 			return true;
 		}
 		return false;
+	}
+	
+	public int columnIndex(int column) {
+		return pieces[column];
 	}
 	
 	private int getColumnIndex(int column) {
@@ -41,6 +48,10 @@ public class Board {
 				return i;
 		}
 		return index;
+	}
+	
+	public boolean canAdd(int column) {
+		return pieces[column] < board.length - 1;
 	}
 	
 	public void print() {

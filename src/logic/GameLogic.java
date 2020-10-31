@@ -17,7 +17,7 @@ public class GameLogic {
 		board.addPiece(4, 'A');
 		board.addPiece(0, 'P');
 		board.addPiece(2, 'A');
-		board.addPiece(6, 'A');
+		board.addPiece(6, 'P');
 		board.print();
 		//*/
 		p1 = new Player('P', board);

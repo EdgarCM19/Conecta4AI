@@ -6,7 +6,6 @@ public class Board {
 
 	//public ArrayList [] board;
 	public char [][] board;
-	private final int MAX = 6;
 	public int [] pieces;
 	
 	public Board() {
@@ -24,8 +23,6 @@ public class Board {
 			}
 		}
 	}
-
-
 
 	public boolean addPiece(int column, char name) {
 		int index;

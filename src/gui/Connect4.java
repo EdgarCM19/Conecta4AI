@@ -54,6 +54,7 @@ public class Connect4 extends GameObject {
 		g.drawImage(board, board_x, board_y, null);
 		drawPieces(g);
 		if(pointer_column != -1) {
+			g.setColor(Color.RED);
 			g.fillOval(board_x + BORDER + PAD_X+ (pointer_column * TILE_SIZE_X) , 
 					board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
 		}

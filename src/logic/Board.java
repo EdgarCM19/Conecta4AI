@@ -16,6 +16,15 @@ public class Board {
 	
 	
 	
+	public Board(char[][] board) {
+		this.board = board;
+        pieces = new int[7];
+        for(int i = 0; i < 7; i++)
+            pieces[i]=getColumnIndex(i); 
+	}
+
+
+
 	private void initBoard() {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
@@ -58,6 +67,18 @@ public class Board {
 			}
 			System.out.println("");
 		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer cad = new StringBuffer();
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				cad.append(board[i][j] + " ");
+			}
+			cad.append("\n");
+		}
+		return cad.toString();
 	}
 	
 }

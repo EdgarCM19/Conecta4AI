@@ -99,9 +99,7 @@ public class Connect4 extends GameObject {
 	}
 	
 	private int calculatePointerColumn() {
-		int x = (int)Math.floor((getMouseX() - board_x - BORDER) / TILE_SIZE_X);
-		System.out.println(x);
-		return x;
+		return (int)Math.floor((getMouseX() - board_x - BORDER) / TILE_SIZE_X);
 	}
 	
 }

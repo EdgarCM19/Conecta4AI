@@ -2,6 +2,8 @@ package logic;
 
 import java.util.ArrayList;
 
+import AI.Evaluation;
+
 public class Board {
 
 	//public ArrayList [] board;

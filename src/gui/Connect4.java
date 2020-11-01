@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import com.golden.gamedev.GameEngine;
 import com.golden.gamedev.GameObject;
 
+import AI.Evaluation;
 import logic.GameLogic;
 
 public class Connect4 extends GameObject {
@@ -29,7 +31,9 @@ public class Connect4 extends GameObject {
 	private final int BOARD_SIZE_Y = TILE_SIZE_Y * 6;
 	
 	private int board_x, board_y;
-	private int pointer_column;
+	private int pointer_column, pointer_column_ai;
+	
+	private boolean throwed;
 	
 	
 	public Connect4(GameEngine parent) {
@@ -53,20 +57,50 @@ public class Connect4 extends GameObject {
 		g.drawImage(fondo, 0, 0, null);
 		g.drawImage(board, board_x, board_y, null);
 		drawPieces(g);
-		if(pointer_column != -1) {
-			g.setColor(Color.RED);
-			g.fillOval(board_x + BORDER + PAD_X+ (pointer_column * TILE_SIZE_X) , 
-					board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
+		if(throwed) {
+			tryT(g);
+		} else {
+			if(pointer_column != -1) {
+				g.setColor(Color.RED);
+				g.fillOval(board_x + BORDER + PAD_X+ (pointer_column * TILE_SIZE_X) , 
+						board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
+			}
 		}
 	}
 
 	@Override
 	public void update(long time) {
-		pointer_column = -1;
+		throwed = false;
+		pointer_column = pointer_column_ai -1;
 		if(inBoard()) {
 			pointer_column = calculatePointerColumn();
 			if(click()) {
-				game.board.addPiece(pointer_column, 'A');
+				if(game.board.addPiece(pointer_column, 'P')) {
+					throwed = true;
+					pointer_column = -1;
+					if(Evaluation.isMeta(game.board)) {
+						System.out.println("Ganaste");
+						parent.nextGameID = 0;
+						finish();
+					}
+				}
+			}
+		}
+	}
+	
+	private void tryT(Graphics2D g) {
+		while(true) {
+			Random rnd = new Random();
+			int column = rnd.nextInt(7);
+			pointer_column_ai = column;
+			if(game.board.addPiece(column, 'A')) {
+				System.out.println(Evaluation.evaluation(game.board));
+				if(Evaluation.isMeta(game.board)) {
+					System.out.println("Te gano la AI");
+					parent.nextGameID = 0;
+					finish();
+				}
+				break;
 			}
 		}
 	}

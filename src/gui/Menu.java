@@ -23,6 +23,7 @@ public class Menu extends GameObject {
 
 	@Override
 	public void render(Graphics2D g) {
+		g.clearRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.CYAN);
 		g.fillRect(100, 100, 300, 300);
 		btn_start.render(g, 100, 100);

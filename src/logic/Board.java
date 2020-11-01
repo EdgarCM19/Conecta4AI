@@ -18,13 +18,24 @@ public class Board {
 	
 	
 	
+	public Board(char[][] board,int[] pieces) {
+		this.board = board;
+        this.pieces=pieces;
+	}
+	
+	
+
 	public Board(char[][] board) {
 		this.board = board;
-        pieces = new int[7];
-        for(int i = 0; i < 7; i++)
-            pieces[i]=getColumnIndex(i); 
+		pieces = new int[7];
+        initPieces();
 	}
-
+	
+	private void initPieces() {
+		for (int column = 0; column < board[0].length; column++) {
+			pieces[column] = getColumnIndex(column);
+		}
+	}
 
 
 	private void initBoard() {
@@ -59,7 +70,7 @@ public class Board {
 	}
 	
 	public boolean canAdd(int column) {
-		return pieces[column] < board.length - 1;
+		return pieces[column] < board.length;
 	}
 	
 	public void print() {

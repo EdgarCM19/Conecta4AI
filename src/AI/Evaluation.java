@@ -6,25 +6,27 @@ public class Evaluation {
 	
 	
 	//Funciones de evaluación.
-	public static float evaluation(Board data) {
-		return free_rows(data.board, 'P');
+	public static float evaluation(Board data, char player) {
+		return free_rows(data.board, player);
 	}
 	
+	
+	//Cuenta cuantas filas cuentan con el espacio minimo para ganar
 	public static int free_rows(char [][] matrix, char c) {
 		int cont = 0;
 		for (int row = 0; row < matrix.length; row++) {
 			if(max_for_row(matrix, row, c) >= 4)
 				cont++;
 		}
+		System.out.println("Columnas libres para :" + c + " = " + cont);
 		return cont;
 	}
 	
+	//cuenta espacios maximos de una fila
 	public static int max_for_row(char[][] matrix, int row, char c) {
 		int cont = 0, pa = 0;
-		for(int column = 0; column < matrix[row].length; column++) {
-			System.out.println("Col: " + column);
+		for(int column = 0; column < matrix[row].length; column++) {	
 			if(matrix[row][column] == c || matrix[row][column] == '-') {
-				System.out.println("Entre si que si");
 				pa += 1;
 			} else {
 				cont = max(pa, cont);
@@ -35,6 +37,12 @@ public class Evaluation {
 		System.out.println("Salida de " + cont);
 		return cont;
 	}
+	
+	//[x] filas disponibles
+	//[ ] columnas disponibles - peso más bajo
+	//[ ] diagonal derecha hacia abajo + peso
+	//[ ] diagonal derecha hacia arriba + peso
+	
 	
 	private static int min(int a, int b) {
 		return (a < b) ?  a : b;

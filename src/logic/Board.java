@@ -16,12 +16,11 @@ public class Board {
 	
 	
 	
-	public Board(char[][] board) {
+	public Board(char[][] board,int[] pieces) {
 		this.board = board;
-        pieces = new int[7];
-        for(int i = 0; i < 7; i++)
-            pieces[i]=getColumnIndex(i); 
+        this.pieces=pieces;
 	}
+
 
 
 
@@ -57,7 +56,7 @@ public class Board {
 	}
 	
 	public boolean canAdd(int column) {
-		return pieces[column] < board.length - 1;
+		return pieces[column] < 6;
 	}
 	
 	public void print() {

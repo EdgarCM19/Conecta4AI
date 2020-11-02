@@ -7,10 +7,13 @@ public class Evaluation {
 	
 	//Funciones de evaluación.
 	public static float evaluation(Board data, char player) {
-		return free_rows(data.board, player);
+		//return free_rows(data.board, player);
+		return diagonals_down(data.board,player);
+		//return free_columns(data.board,player);
+		//return diagonals_up(data.board,player);
 	}
 	
-	
+	//[x] filas disponibles
 	//Cuenta cuantas filas cuentan con el espacio minimo para ganar
 	public static int free_rows(char [][] matrix, char c) {
 		int cont = 0;
@@ -38,12 +41,73 @@ public class Evaluation {
 		return cont;
 	}
 	
-	//[x] filas disponibles
-	//[ ] columnas disponibles - peso más bajo
-	//[ ] diagonal derecha hacia abajo + peso
-	//[ ] diagonal derecha hacia arriba + peso
+	//[x] columnas disponibles 
+	public static int free_columns(char [][] matrix, char c){
+		int cont = 0;
+		for (int column = 0; column< 6; column++) {
+			if(max_for_column(matrix,column, c) >= 4)
+				cont++;
+		}
+		System.out.println("Filas libres para :" + c + " = " + cont);
+		return cont;
+	}
 	
+	private static int max_for_column(char[][] matrix, int column, char c) {
+		int cont=0,pa=0;
+		for(int rows=0;rows<matrix.length;rows++) {
+			if(matrix[rows][column] == c || matrix[rows][column]=='-')
+				pa+=1;
+			else {
+				cont = max(pa,cont);
+				pa=0;
+			}	
+		}
+		System.out.println("Salida de " + cont);
+		return cont;
+	}
 	
+	//[x] diagonal derecha hacia abajo 
+	private static int diagonals_down(char[][]matrix,char c) {
+		int cont=0;
+		for(int colum = 0;colum<4;colum++) {
+			if(max_for_diagonals_down(matrix,colum,c)>0)
+				cont++;
+			System.out.println("Este es el conta: "+cont);
+		}
+		System.out.println("Filas libres el diagonal desendente para :" + c + " = " + cont);
+		return cont;
+	}
+	
+	private static int max_for_diagonals_down(char[][] matrix, int colum,char c) {
+		int cont=0;
+		for(int rows=0;rows<3;rows++) {
+			if(evaluateDiagonalEspaceDown(matrix,rows,colum,'-',c))
+				cont++;	
+		}
+		System.out.println("Salida de filas:" + cont);
+		return cont;
+	}
+
+	//[x] diagonal derecha hacia arriba
+	public static int diagonals_up(char [][] matrix, char c) {
+		int cont=0;
+		for(int colm=0;colm<4;colm++) {
+			if(max_for_diadonals_up(matrix,colm,c)>0)
+				cont++;
+		}
+		System.out.println("Filas libres el diagonal acendente para :" + c + " = " + cont);
+		return cont;
+	}
+	private static int max_for_diadonals_up(char[][] matrix, int colm, char c) {
+		int cont=0;
+		for(int rows=5;rows>2;rows--) {
+			if(eveluteDiagonalEspaceUp(matrix,rows,colm,'-',c))
+				cont++;
+		}
+		System.out.println("Salida de " + cont);
+		return cont;
+	}
+
 	private static int min(int a, int b) {
 		return (a < b) ?  a : b;
 	}
@@ -121,11 +185,26 @@ public class Evaluation {
 	
 	private static boolean evaluateUR(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
-		for(int i = 0; i < 4; i++)
+		for(int i = 0; i < 3; i++)
 			if(matrix[row - i][column + i] != c)
 				return false;
 		return true;
 	}
 	
-
+	private static boolean eveluteDiagonalEspaceUp(char[][] matrix,int row,int column,char c,char player) {
+		for(int i = 0; i < 4; i++) {
+			if(matrix[row - i][column + i] != c && matrix[row - i][column + i] !=player)
+				return false;
+		}
+		return true;
+	}
+	
+	private static boolean evaluateDiagonalEspaceDown(char[][] matrix, int row, int column,char c,char player) {
+		for(int i = 0; i < 4; i++) {
+			if(matrix[row + i][column + i] != c && matrix[row+i][column+i]!=player)
+				return false;
+		}	
+		System.out.println("Ya sali de: fila: "+ row+" columna: "+column);
+		return true;
+	}
 }

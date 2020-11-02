@@ -94,7 +94,7 @@ public class Connect4 extends GameObject {
 			int column = rnd.nextInt(7);
 			pointer_column_ai = column;
 			if(game.board.addPiece(column, 'A')) {
-				System.out.println(Evaluation.evaluation(game.board, 'P'));
+				System.out.println(Evaluation.evaluation(game.board, 'A'));
 				//game.printTree(game.board);
 				if(Evaluation.isMeta(game.board)) {
 					System.out.println("Te gano la AI");

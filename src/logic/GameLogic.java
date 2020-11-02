@@ -53,9 +53,9 @@ public class GameLogic {
         //Col
 		
         board.addPiece(0, 'A');
-        board.addPiece(0, 'A');
-        board.addPiece(0, 'A');
-        board.addPiece(0, 'P');
+        //board.addPiece(0, 'A');
+        //board.addPiece(0, 'A');
+        //board.addPiece(0, 'P');
         //board.addPiece(0, 'A');
         /*board.addPiece(0, 'P');
         board.addPiece(0, 'A');
@@ -65,11 +65,11 @@ public class GameLogic {
         board.addPiece(1, 'P');
         board.addPiece(1, 'A');
         board.addPiece(1, 'A');
-        //board.addPiece(1, 'A');
-        //board.addPiece(1, 'P');
-        //board.addPiece(1, 'P');
+        board.addPiece(1, 'A');
+        board.addPiece(1, 'P');
+        board.addPiece(1, 'P');
         //Col3
-        board.addPiece(2, 'A');
+        board.addPiece(2, 'P');
         board.addPiece(2, 'A');
         board.addPiece(2, 'P');
         board.addPiece(2, 'P');
@@ -77,15 +77,15 @@ public class GameLogic {
         board.addPiece(3, 'A');
         board.addPiece(3, 'P');
         board.addPiece(3, 'A');
-        //board.addPiece(3, 'A');
-        //board.addPiece(3, 'A');
+        board.addPiece(3, 'A');
+        board.addPiece(3, 'A');
         /*board.addPiece(3, 'A');
         board.addPiece(3, 'P');
         board.addPiece(3, 'A');*/
         //Col5
         board.addPiece(4, 'P');
         board.addPiece(4, 'P');
-        board.addPiece(4, 'P');
+        board.addPiece(4, 'A');
         /*board.addPiece(4, 'A');
         board.addPiece(4, 'A');
         board.addPiece(4, 'P');*/
@@ -96,16 +96,17 @@ public class GameLogic {
         board.addPiece(5, 'A');
         board.addPiece(5, 'A');
          
-        //board.addPiece(5, 'P');
+        board.addPiece(5, 'P');
         
-        //board.addPiece(5, 'P');
-        //board.addPiece(5, 'P');
+        board.addPiece(5, 'P');
+        board.addPiece(5, 'P');
         //COl
+       board.addPiece(6, 'P');
+       board.addPiece(6, 'P');
+       board.addPiece(6, 'P');
         board.addPiece(6, 'A');
-        board.addPiece(6, 'P');
-        board.addPiece(6, 'P');
-        board.addPiece(6, 'A');
-        System.out.println((Evaluation.evaluation(board, 'P')));
+        board.print();
+        System.out.println((Evaluation.evaluation(board, 'A')));
         //board.addPiece(6, 'A');
         //board.addPiece(6, 'A');
         

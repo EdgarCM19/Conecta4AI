@@ -9,7 +9,9 @@ import java.util.Random;
 import com.golden.gamedev.GameEngine;
 import com.golden.gamedev.GameObject;
 
+import AI.Algorithm;
 import AI.Evaluation;
+import AI.Node;
 import logic.GameLogic;
 
 public class Connect4 extends GameObject {
@@ -77,9 +79,12 @@ public class Connect4 extends GameObject {
 			if(click()) {
 				if(game.board.addPiece(pointer_column, 'P')) {
 					throwed = true;
+					System.out.println(Evaluation.closeToWin(game.board.board, 'P'));
 					pointer_column = -1;
 					if(Evaluation.isMeta(game.board)) {
 						System.out.println("Ganaste");
+						System.out.println("[FINAL]>");
+						System.out.println(game.board);
 						parent.nextGameID = 0;
 						finish();
 					}
@@ -89,19 +94,36 @@ public class Connect4 extends GameObject {
 	}
 	
 	private void tryT(Graphics2D g) {
+		
+		/*
 		while(true) {
 			Random rnd = new Random();
 			int column = rnd.nextInt(7);
 			pointer_column_ai = column;
 			if(game.board.addPiece(column, 'A')) {
 				System.out.println(Evaluation.evaluation(game.board, 'A'));
-				//game.printTree(game.board);
 				if(Evaluation.isMeta(game.board)) {
 					System.out.println("Te gano la AI");
 					parent.nextGameID = 0;
 					finish();
 				}
+				Node temp = new Node(game.board, 0, -1);
+				temp.createTreeN(temp, 0, 'A', 1);
+				temp.printNodeTree(temp);
 				break;
+			}
+		} */
+		
+		Algorithm alg = new Algorithm(game.board);
+		if(game.board.addPiece(alg.poda(), 'A')) {
+			//System.out.println(Evaluation.evaluation(game.board, 'A'));
+			//game.printTree(game.board);
+			if(Evaluation.isMeta(game.board)) {
+				System.out.println("Te gano la AI");
+				System.out.println("[FINAL]>");
+				System.out.println(game.board);
+				parent.nextGameID = 0;
+				finish();
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package logic;
 
+import AI.Algorithm;
 import AI.Evaluation;
 import AI.Node;
 
@@ -9,12 +10,68 @@ public class GameLogic {
 	public Player p1, p2;
 	
 	public GameLogic() {
-		/*
+		
 		board = new Board();
         p1 = new Player('P', board);
         p2 = new Player('A', board);
+        
+        /*
+        board.addPiece(0, 'P');
+        board.addPiece(1, 'A');
+        board.addPiece(1, 'A');
+        board.addPiece(1, 'A');
+        board.addPiece(2, 'A');
+        board.addPiece(3, 'P');
+        board.addPiece(3, 'P');
+        board.addPiece(4, 'P');
+        board.addPiece(4, 'A');
+        board.addPiece(4, 'P');
+        board.addPiece(5, 'A');
+        board.addPiece(5, 'P');
+        board.addPiece(5, 'A');
+        board.addPiece(5, 'P');
+        board.addPiece(6, 'A');
+        board.addPiece(6, 'A');
+        board.addPiece(6, 'P');
+        board.addPiece(6, 'A');
+        System.out.println(Evaluation.closeToWin(board.board, 'P'));
         */
-		test();
+        
+        
+        /*
+        board.addPiece(6, 'P');
+        board.addPiece(5, 'A');
+        board.addPiece(5, 'A');
+        board.addPiece(5, 'A');
+        board.addPiece(4, 'A');
+        board.addPiece(3, 'P');
+        //board.addPiece(3, 'P');
+        board.addPiece(2, 'P');
+        board.addPiece(2, 'A');
+        board.addPiece(2, 'P');
+        board.addPiece(1, 'A');
+        board.addPiece(1, 'P');
+        board.addPiece(1, 'A');
+        board.addPiece(1, 'P');
+        board.addPiece(0, 'A');
+        board.addPiece(0, 'A');
+        board.addPiece(0, 'P');
+        board.addPiece(0, 'A');
+        board.addPiece(0, 'P');
+        System.out.println(Evaluation.closeToWin(board.board, 'P'));
+        */
+        
+        
+        
+        /* 
+        Node temp = new Node(board, 0, -1);
+		temp.createTreeN(temp, 0, 'A', 3);
+		Algorithm algo = new Algorithm(board);
+		System.out.println("[++++++]> " + algo.poda());
+		*/
+		//temp.printNodeTree(temp);
+        //test();
+        
         //System.out.println("A ver");
         //temp.data.print();
         //temp.createChild('A',temp.depth + 1 );
@@ -41,7 +98,7 @@ public class GameLogic {
 	
 	private void test() {
 		
-		board = new Board();
+		Board board2 = new Board();
 		/*
         board.addPiece(1, 'A');
         board.addPiece(1, 'A');
@@ -53,7 +110,7 @@ public class GameLogic {
         //Col
 		
         board.addPiece(0, 'A');
-        //board.addPiece(0, 'A');
+        board.addPiece(0, 'A');
         //board.addPiece(0, 'A');
         //board.addPiece(0, 'P');
         //board.addPiece(0, 'A');
@@ -67,7 +124,7 @@ public class GameLogic {
         board.addPiece(1, 'A');
         board.addPiece(1, 'A');
         board.addPiece(1, 'P');
-        board.addPiece(1, 'P');
+        //board.addPiece(1, 'P');
         //Col3
         board.addPiece(2, 'P');
         board.addPiece(2, 'A');
@@ -96,16 +153,22 @@ public class GameLogic {
         board.addPiece(5, 'A');
         board.addPiece(5, 'A');
          
-        board.addPiece(5, 'P');
+        //board.addPiece(5, 'P');
         
-        board.addPiece(5, 'P');
+        //board.addPiece(5, 'P');
         board.addPiece(5, 'P');
         //COl
-       board.addPiece(6, 'P');
-       board.addPiece(6, 'P');
-       board.addPiece(6, 'P');
-        board.addPiece(6, 'A');
-        board.print();
+	       board.addPiece(6, 'P');
+	       board.addPiece(6, 'P');
+	       //board.addPiece(6, 'P');
+	       board.addPiece(6, 'A');
+	       board.print();
+       	Node temp = new Node(board2, 0, -1);
+		temp.createTreeN(temp, 0, 'A', 2);
+		Algorithm algo = new Algorithm(board2);
+		System.out.println("[++++++]> " + algo.poda());
+       
+        
         System.out.println((Evaluation.evaluation(board, 'A')));
         //board.addPiece(6, 'A');
         //board.addPiece(6, 'A');

@@ -15,12 +15,34 @@ public class Node {
     public float factor;
     public int mov;
     public int depth;
+    public int best;
     
     public Node(Board data,int depth,int mov) {
         this.data=data;
         this.depth=depth;
         this.mov=mov;
+        this.best = -1;
         nodes = new ArrayList<Node>();
+    }
+    
+    public void setBest(int a) {
+    	this.best = a;
+    }
+    
+    
+    public void setFactor(float factor) {
+    	this.factor = factor;
+    }
+    
+    public void printResult(Node n) {
+    	/*
+    	for(Node node : n.nodes)
+    		if(node.best != -1) {
+    			System.out.println();
+    			printResult(node);
+    		}
+    	*/
+    			
     }
     
     public void createChild(char player,int depth) {
@@ -52,7 +74,7 @@ public class Node {
     	System.out.println("-+-+-+-+-+-+-+-+-+-+-+-");
     	System.out.println("Nodo Padre: ");
     	System.out.println(n);
-    	System.out.println("Nodos hijos: ");
+    	System.out.println("Nodos hijos: " + n.nodes.size());
     	for(int i = 0; i < n.nodes.size(); i++) {
     		System.out.println("[NODO HIJO No " + i + "]");
     		System.out.println(n.nodes.get(i));
@@ -78,30 +100,16 @@ public class Node {
     
     public void createTreeN(Node node, int depth, char player, int horizont) {
     	if(node.depth < horizont && !Evaluation.isMeta(node.data)) {
-    		System.out.println("holis");
     		char c = (player == 'A') ? 'P' : 'A';
     		for (int column = 0; column < node.data.pieces.length; column++) {
 				if(node.data.canAdd(column)) {
-					System.out.println("Alooo?");
 					Board temp = new Board(copyBoard(node.data));
 					temp.addPiece(column, c);
 					Node ntemp = new Node(temp, depth + 1, column); 
-					nodes.add(ntemp);
+					node.nodes.add(ntemp);
 					if(!Evaluation.isMeta(ntemp.data)) {
 						createTreeN(ntemp, depth + 1, c, horizont);
-					} /* else {
-						System.out.println("}{}}{}{{}{{}{}{}{}{}}{{}{}");
-						System.out.println(ntemp);
-						for (int columnb = 0; columnb < node.data.pieces.length; columnb++) {
-							if(node.data.canAdd(columnb)) {
-								System.out.println("La columna: " + columnb + " entro a la creacion");
-								Board temp2 = new Board(copyBoard(ntemp.data), ntemp.data.pieces);
-								temp2.addPiece(columnb, player);
-								temp2.print();
-							}
-						}
-						System.out.println("}{}}{}{{}{{}{}{}{}{}}{{}{}");
-					} */
+					} 
 				}
 			}
     	}
@@ -144,6 +152,6 @@ public class Node {
     
     @Override
     public String toString() {
-    	return "Tablero: \n" + data.toString() + "Factor: \n" + this.factor + "\n Profundidad: " + this.depth; 
+    	return "Tablero: \n" + data.toString() + "\n Profundidad: " + this.depth + "\nBEST>" + best; 
     }
 }

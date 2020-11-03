@@ -4,14 +4,131 @@ import logic.Board;
 
 public class Evaluation {
 	
+	private final static float alpha1 = 0.15f; //Filas
+	private final static float alpha2 = 0.13f; //Columnas
+	private final static float alpha3 = 0.25f; //Diagonal sup
+	private final static float alpha4 = 0.25f; //Diagonal inf
+	private final static float alpha5 = 0.2f;
 	
 	//Funciones de evaluación.
 	public static float evaluation(Board data, char player) {
-		//return free_rows(data.board, player);
-		return diagonals_down(data.board,player);
-		//return free_columns(data.board,player);
-		//return diagonals_up(data.board,player);
+		return ((alpha1 * free_rows(data.board, player) / 6) +
+				(alpha2 * free_columns(data.board, player) / 7) +
+				(alpha3 * diagonals_down(data.board, player) / 6) +
+				(alpha4 * diagonals_up(data.board, player) / 6));
 	}
+	
+	public static int followingPieces(char [][] matrix, int row, int column, int mode) {
+		int cont = 0;
+		char c = matrix[row][column];
+		switch(mode) {
+			case 0: //Derecha
+				for(int index = 0; index < 3; index++) {	
+					if(matrix[row][column + index] != c) 
+						return cont;
+					else
+						cont++;
+				}
+				return cont;
+			case 1: //Arriba
+				for(int index = 0; index < 3; index++) {	
+					if(matrix[row - index][column] != c) 
+						return cont;
+					else
+						cont++;
+				}
+				break;
+			case 2: //Diagonal arriba
+				for(int index = 0; index < 3; index++) {	
+					if(matrix[row - index][column + index] != c) 
+						return cont;
+					else
+						cont++;
+				}
+				break;
+			case 3: //Diagonal abajo
+				for(int index = 0; index < 3; index++) {	
+					if(matrix[row + index][column + index] != c) 
+						return cont;
+					else
+						cont++;
+				}
+				break;
+			default:
+				return -1;
+		}
+		return cont;
+	}
+	
+	
+	
+	public static int closeToWin(char [][] matrix, char player) {
+		char other = player == 'A' ? 'P' : 'A';
+		int close = 0, aux;
+		for (int i = matrix.length - 1; i >= 0; i--) {
+			for (int j = 0; j < matrix[i].length; j++) {
+				if(matrix[i][j] == player) {
+					if(canUp(i) && matrix[i][j] != player){
+						aux = followingPieces(matrix, i, j, 1);
+						if(aux == 3) {
+							if(matrix[i - aux][j] == '-') {
+								//System.out.println("> Posibilidad hacia arriba en: " + i + ", " + j);
+								close++;
+							}
+						}
+						//System.out.println("Break 1");
+						if(canRigth(j, matrix[0].length) && matrix[i][j] == player) {
+							if((aux = followingPieces(matrix, i, j, 0)) == 3) {
+								if(matrix[i][j + aux] == '-' && j > 0) {
+									//System.out.println("Posibilidad hacia derecha en: " + i + ", " + j);
+									close++;
+									if(matrix[i][j-1] == '-') {
+										//System.out.println("Posibilidad izquierda en: " + i + ", " + j);
+										close++;
+									}
+								}
+							}
+							//System.out.println("break 2");
+							//Diagonal arriba derecha
+							if((aux = followingPieces(matrix, i, j, 2)) == 3) {
+								if(matrix[i - aux][j + aux] == '-' && i < matrix.length - 1 && j > 0) {
+									//System.out.println("Posibilidad hacia arriba derecha en: " + i + ", " + j);
+									close++;
+									if(matrix[i + 1][j - 1] == '-') {
+										//System.out.println("Posibilidad hacia arriba derecha antes en: " + (i - 1) + ", " + (j - 1));
+										close++;
+									}
+								}
+							}
+							
+						}
+					}
+					//System.out.println("break 3");
+					if(canDown(i, matrix.length)){
+						if(canRigth(j, matrix[0].length) && matrix[i][j] == player) {
+							if((aux = followingPieces(matrix, i, j, 3)) == 3) {							
+								if(matrix[i + aux][j + aux] == '-' && j < matrix[i].length) {
+									close++;
+									if(matrix[i + 1][j + 1] == '-') {
+										//System.out.println("Posibilidad hacia arriba derecha antes en: " + (i - 1) + ", " + (j - 1));
+										close++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return close;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	//[x] filas disponibles
 	//Cuenta cuantas filas cuentan con el espacio minimo para ganar
@@ -21,7 +138,6 @@ public class Evaluation {
 			if(max_for_row(matrix, row, c) >= 4)
 				cont++;
 		}
-		System.out.println("Columnas libres para :" + c + " = " + cont);
 		return cont;
 	}
 	
@@ -37,7 +153,7 @@ public class Evaluation {
 			}
 		}
 		cont = max(pa, cont);
-		System.out.println("Salida de " + cont);
+		//System.out.println("Salida de " + cont);
 		return cont;
 	}
 	
@@ -48,7 +164,7 @@ public class Evaluation {
 			if(max_for_column(matrix,column, c) >= 4)
 				cont++;
 		}
-		System.out.println("Filas libres para :" + c + " = " + cont);
+		//System.out.println("Filas libres para :" + c + " = " + cont);
 		return cont;
 	}
 	
@@ -62,7 +178,7 @@ public class Evaluation {
 				pa=0;
 			}	
 		}
-		System.out.println("Salida de " + cont);
+		//System.out.println("Salida de " + cont);
 		return cont;
 	}
 	
@@ -72,9 +188,8 @@ public class Evaluation {
 		for(int colum = 0;colum<4;colum++) {
 			if(max_for_diagonals_down(matrix,colum,c)>0)
 				cont++;
-			System.out.println("Este es el conta: "+cont);
 		}
-		System.out.println("Filas libres el diagonal desendente para :" + c + " = " + cont);
+		//System.out.println("Filas libres el diagonal desendente para :" + c + " = " + cont);
 		return cont;
 	}
 	
@@ -84,7 +199,6 @@ public class Evaluation {
 			if(evaluateDiagonalEspaceDown(matrix,rows,colum,'-',c))
 				cont++;	
 		}
-		System.out.println("Salida de filas:" + cont);
 		return cont;
 	}
 
@@ -95,7 +209,7 @@ public class Evaluation {
 			if(max_for_diadonals_up(matrix,colm,c)>0)
 				cont++;
 		}
-		System.out.println("Filas libres el diagonal acendente para :" + c + " = " + cont);
+		//System.out.println("Filas libres el diagonal acendente para :" + c + " = " + cont);
 		return cont;
 	}
 	private static int max_for_diadonals_up(char[][] matrix, int colm, char c) {
@@ -104,7 +218,6 @@ public class Evaluation {
 			if(eveluteDiagonalEspaceUp(matrix,rows,colm,'-',c))
 				cont++;
 		}
-		System.out.println("Salida de " + cont);
 		return cont;
 	}
 
@@ -117,7 +230,7 @@ public class Evaluation {
 	}
 	
 	//Funciones para ver si es meta.
-	public static boolean isMeta(Board data) {
+	public static boolean isMeta(Board data) {		
 		for(int column = 0; column < data.board[0].length; column++) {
 			for(int row = 0; row < data.board.length; row++) {
 				if(data.board[row][column] != '-') {
@@ -144,7 +257,10 @@ public class Evaluation {
 				}
 			}
 		}
-		return false;
+		for(int c : data.pieces)
+			if(c < data.board.length)
+				return false;
+		return true;
 	}
 	
 	private static boolean canUp(int index) {
@@ -185,7 +301,7 @@ public class Evaluation {
 	
 	private static boolean evaluateUR(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < 4; i++)
 			if(matrix[row - i][column + i] != c)
 				return false;
 		return true;
@@ -204,7 +320,6 @@ public class Evaluation {
 			if(matrix[row + i][column + i] != c && matrix[row+i][column+i]!=player)
 				return false;
 		}	
-		System.out.println("Ya sali de: fila: "+ row+" columna: "+column);
 		return true;
 	}
 }

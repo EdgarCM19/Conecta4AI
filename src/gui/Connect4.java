@@ -115,6 +115,9 @@ public class Connect4 extends GameObject {
 		} */
 		
 		Algorithm alg = new Algorithm(game.board);
+		//Node temp = alg.podaAlfaBeta(game.board);
+		//System.out.println("[NEW]>" + temp);
+		//System.out.println(temp.nodes.size());
 		if(game.board.addPiece(alg.poda(), 'A')) {
 			//System.out.println(Evaluation.evaluation(game.board, 'A'));
 			//game.printTree(game.board);

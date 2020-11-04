@@ -29,20 +29,30 @@ public class Node {
     	this.best = a;
     }
     
+    public Node() {
+    	this.data=null;
+        this.depth = 0;
+        this.mov = -1;
+    	this.factor = -1.0f;
+    	this.nodes = new ArrayList<Node>();
+    }
+    
+    public Node(float factor, int depth) {
+    	this.data=null;
+        this.depth = depth;
+        this.mov = -1;
+    	this.factor = factor;
+    	this.nodes = new ArrayList<Node>();
+    }
+    
     
     public void setFactor(float factor) {
     	this.factor = factor;
+    	
     }
     
     public void printResult(Node n) {
-    	/*
-    	for(Node node : n.nodes)
-    		if(node.best != -1) {
-    			System.out.println();
-    			printResult(node);
-    		}
-    	*/
-    			
+    	
     }
     
     public void createChild(char player,int depth) {
@@ -69,16 +79,18 @@ public class Node {
     }
     
     public void printNodeTree(Node n) {
-    	if(Evaluation.isMeta(n.data))
-    		System.out.println("#####ESTE ES META");
+    	//if(Evaluation.isMeta(n.data))
+    		//System.out.println("#####ESTE ES META");
     	System.out.println("-+-+-+-+-+-+-+-+-+-+-+-");
-    	System.out.println("Nodo Padre: ");
+    	System.out.println("Nodo: ");
     	System.out.println(n);
-    	System.out.println("Nodos hijos: " + n.nodes.size());
+    	//System.out.println("Nodos hijos: " + n.nodes.size());
+    	/*
     	for(int i = 0; i < n.nodes.size(); i++) {
     		System.out.println("[NODO HIJO No " + i + "]");
     		System.out.println(n.nodes.get(i));
     	}
+    	*/
     	for(Node node : n.nodes)
     		printNodeTree(node);
     }
@@ -96,6 +108,13 @@ public class Node {
                  createTree(nodo.nodes.get(i),nodo.nodes.get(i).depth,c,horizon);    
              }
         }
+    }
+    
+    public Node getMove(int column, char player) {
+    	Board b_temp = new Board(copyBoard());
+    	b_temp.addPiece(column, player);
+    	Node temp = new Node(b_temp, 0, column);
+    	return temp;
     }
     
     public void createTreeN(Node node, int depth, char player, int horizont) {
@@ -152,6 +171,6 @@ public class Node {
     
     @Override
     public String toString() {
-    	return "Tablero: \n" + data.toString() + "\n Profundidad: " + this.depth + "\nBEST>" + best; 
+    	return /*"Tablero: \n" + data.toString() + */ "\n Profundidad: " + this.depth + "\nFACTOR>" + factor; 
     }
 }

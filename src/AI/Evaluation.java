@@ -13,18 +13,40 @@ public class Evaluation {
 	//Funcion de evaluación.
 	public static float evaluation(Board data, char player) {
 		char other = (player == 'A') ? 'P' : 'A';
+		return 	(free_rows(data.board, player) +
+				free_columns(data.board, player) + 
+				freeDR(data.board, player)+ 
+				freeUR(data.board, player) 
+				+ 
+				numRowsCanWin(data.board, player) +
+				numColumnsCanWin(data.board, player) +
+				numDownDiagonalsCanWin(data.board, player) + 
+				numUpDiagonalsCanWin(data.board, player)
+				) - 
+			   (free_rows(data.board, other) +
+				free_columns(data.board, other) + 
+				freeDR(data.board, other)+ 
+				freeUR(data.board, other) 
+				+ 
+				numRowsCanWin(data.board, other) +
+				numColumnsCanWin(data.board, other) +
+				numDownDiagonalsCanWin(data.board, other) + 
+				numUpDiagonalsCanWin(data.board, other)
+				) - ((isMeta(data) == other) ? 5 : 0)
+			;
+		/*
 		return ((alpha1 * free_rows(data.board, player)) +
 				(alpha2 * free_columns(data.board, player)) +
-				(alpha3 * diagonals_down(data.board, player)) +
-				(alpha4 * diagonals_up(data.board, player)) +
-				(alpha5 * closeToWin(data.board, player)));
-		/*
+				(alpha3 * freeDR(data.board, player)) +
+				(alpha4 * freeUR(data.board, player)) +
+				(alpha5 * closeToWin(data.board, player)))
 				-
 				((alpha1 * free_rows(data.board, other)) +
 				(alpha2 * free_columns(data.board, other)) +
-				(alpha3 * diagonals_down(data.board, other)) +
-				(alpha4 * diagonals_up(data.board, other)) +
-				(alpha5 * closeToWin(data.board, other))) + ((isMeta(data) == player) ? 5f : 0f); */
+				(alpha3 * freeDR(data.board, other)) +
+				(alpha4 * freeUR(data.board, other)) +
+				(alpha5 * closeToWin(data.board, other))); 
+		*/
 	}
 	
 	private static int followingPieces(char [][] matrix, int row, int column, int mode) {
@@ -69,13 +91,12 @@ public class Evaluation {
 		return cont;
 	}
 	
-	private static int closeToWin(char [][] matrix, char player) {
-		char other = player == 'A' ? 'P' : 'A';
+	public static int closeToWin(char [][] matrix, char player) {
 		int close = 0, aux;
 		for (int i = matrix.length - 1; i >= 0; i--) {
 			for (int j = 0; j < matrix[i].length; j++) {
 				if(matrix[i][j] == player) {
-					if(canUp(i) && matrix[i][j] != player){
+					if(canUp(i)){
 						aux = followingPieces(matrix, i, j, 1);
 						if(aux == 3) {
 							if(matrix[i - aux][j] == '-') {
@@ -119,7 +140,7 @@ public class Evaluation {
 		}
 		return close;
 	}
-
+	
 	public static int free_rows(char [][] matrix, char c) {
 		int cont = 0;
 		for (int row = 0; row < matrix.length; row++) {
@@ -129,6 +150,7 @@ public class Evaluation {
 		return cont;
 	}
 	
+
 	public static int max_for_row(char[][] matrix, int row, char c) {
 		int cont = 0, pa = 0;
 		for(int column = 0; column < matrix[row].length; column++) {	
@@ -142,7 +164,7 @@ public class Evaluation {
 		cont = max(pa, cont);
 		return cont;
 	}
-	 
+	
 	public static int free_columns(char [][] matrix, char c){
 		int cont = 0;
 		for (int column = 0; column< 6; column++) {
@@ -165,7 +187,64 @@ public class Evaluation {
 		return cont;
 	}
 	
-	//[x] diagonal derecha hacia abajo 
+	public static int freeDR(char [][] matrix, char c) {
+		int cont = 0;
+		for (int row = 0; canDown(row, matrix.length); row++) {
+			if(maxDR(matrix, row, 0, c) >= 4)
+				cont++;
+		}
+		for (int column = 1; canRigth(column, matrix[0].length); column++) {
+			if(maxDR(matrix, 0, column, c) >= 4)
+				cont++;
+		}
+		return cont;
+	}
+	
+	public static int freeUR(char [][] matrix, char c) {
+		int cont = 0;
+		for (int row = matrix.length - 1; canUp(row); row--) {
+			if(maxUR(matrix, row, 0, c) >= 4) {
+				cont++;
+			}
+		}
+		for (int column = 1; canRigth(column, matrix[0].length); column++) {
+			if(maxUR(matrix, matrix.length - 1, column, c) >= 4) {
+				cont++;
+			}
+		}
+		return cont;
+	}
+	
+	public static int maxDR(char [][] matrix, int row, int column, char c) {
+		int cont = 0, pa = 0;
+		for (int index = row, desp = 0; index < matrix.length && (column + desp) < matrix[row].length; index++, desp++) {
+			if(matrix[index][column + desp] == c || matrix[index][column + desp] == '-') {
+				pa += 1;
+			} else {
+				cont = max(pa, cont);
+				pa = 0;
+			}
+		}
+		cont = max(pa, cont);
+		return cont;
+	}
+	
+	public static int maxUR(char [][] matrix, int row, int column, char c) {
+		int cont = 0, pa = 0;
+		for (int index = row, desp = 0; index >= 0 && (column + desp) < matrix[row].length; index--, desp++) {
+			//System.out.println("[" + index + "][" + (column + desp) + "]>" + matrix[index][column + desp]);
+			if(matrix[index][column + desp] == c || matrix[index][column + desp] == '-') {
+				pa += 1;
+			} else {
+				cont = max(pa, cont);
+				pa = 0;
+			}
+		}
+		cont = max(pa, cont);
+		//System.out.println("MAX UR>" + cont);
+		return cont;
+	}
+	
 	private static int diagonals_down(char[][]matrix,char c) {
 		int cont = 0;
 		for(int colum = 0;colum < 4; colum++) {
@@ -176,8 +255,8 @@ public class Evaluation {
 	}
 	
 	private static int max_for_diagonals_down(char[][] matrix, int colum,char c) {
-		int cont = 0, pa = 0;
-		for(int rows = 0; rows < 4; rows++) {
+		int cont=0;
+		for(int rows = 0; rows < 3; rows++) {
 			if(evaluateDiagonalEspaceDown(matrix, rows, colum, '-', c))
 				cont++;	
 		}
@@ -243,13 +322,16 @@ public class Evaluation {
 		return index - 3 >= 0;  
 	}
 	
+	
 	private static boolean canDown(int index, int height) {
 		return index + 3 < height;  
 	}
 	
+	
 	private static boolean canRigth(int index, int weight) {
 		return index + 3 < weight;
 	}
+	
 	
 	private static boolean evaluateR(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
@@ -259,6 +341,7 @@ public class Evaluation {
 		return true;
 	}
 	
+	
 	private static boolean evaluateD(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
 		for(int i = 0; i < 4; i++)
@@ -266,6 +349,7 @@ public class Evaluation {
 				return false;
 		return true;
 	}
+	
 	
 	private static boolean evaluateDR(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
@@ -275,6 +359,7 @@ public class Evaluation {
 		return true;
 	}
 	
+	
 	private static boolean evaluateUR(char[][] matrix, int row, int column) {
 		char c = matrix[row][column];
 		for(int i = 0; i < 4; i++)
@@ -283,7 +368,7 @@ public class Evaluation {
 		return true;
 	}
 	
-	private static boolean eveluteDiagonalEspaceUp(char[][] matrix,int row, int column, char c, char player) {
+	private static boolean eveluteDiagonalEspaceUp(char[][] matrix,int row,int column,char c,char player) {
 		for(int i = 0; i < 4; i++) {
 			if(matrix[row - i][column + i] != c && matrix[row - i][column + i] != player)
 				return false;
@@ -297,5 +382,137 @@ public class Evaluation {
 				return false;
 		}	
 		return true;
+	}
+	
+	public static int numRowsCanWin(char [][] matrix, char c) {
+		int cont = 0;
+		for (int row = 0; row < matrix.length; row++) {
+			if(canWinInRow(matrix, row, c))
+				cont++;
+		}
+		return cont;
+	}
+	
+	public static boolean canWinInRow(char [][] matrix, int row, char c) {
+		int prev = 0, next = 0;
+		boolean white = false;
+		for (int column = 0; column < matrix[row].length; column++) {
+			if(matrix[row][column] == c) {
+				if(!white) {
+					prev++;
+				} else {
+					next++;
+				}
+				if((prev + (next > 0 ? next : -1) + 1) >= 4)
+					return true;
+			} else if(matrix[row][column] == '-') {
+				white = true;
+			} else {
+				prev = next = 0;
+				white = false;
+			}
+		} 
+		return false;
+	}
+	
+	public static int numColumnsCanWin(char [][] matrix, char c) {
+		int cont = 0;
+		for (int column = 0; column < matrix[0].length; column++) {
+			if(canWinInColumn(matrix, column, c))
+				cont++;
+		}
+		return cont;
+	}
+	
+	public static boolean canWinInColumn(char [][] matrix, int column, char c) {
+		int prev = 0, next = 0;
+		boolean white = false;
+		for (int row = 0; row < matrix.length; row++) {
+			if(matrix[row][column] == c) {
+				if(!white) {
+					prev++;
+				} else {
+					next++;
+				}
+				if((prev + (next > 0 ? next : -1) + 1) >= 4)
+					return true;
+			} else if(matrix[row][column] == '-') {
+				white = true;
+			} else {
+				prev = next = 0;
+				white = false;
+			}
+		} 
+		return false;
+	}
+	
+	public static int numDownDiagonalsCanWin(char [][] matrix, char c) {
+		int cont = 0;
+		for (int row = 0; canDown(row, matrix.length); row++) {
+			if(canWinInDownDiagonal(matrix, row, 0, c))
+				cont++;
+		}
+		for (int column = 1; canRigth(column, matrix[0].length); column++) {
+			if(canWinInDownDiagonal(matrix, 0, column, c))
+				cont++;
+		}
+		return cont;
+	}
+	
+	public static boolean canWinInDownDiagonal(char [][] matrix, int row, int column, char c) {
+		int prev = 0, next = 0;
+		boolean white = false;
+		for (int index = row, desp = 0; index < matrix.length && (column + desp) < matrix[row].length; index++, desp++) {
+			if(matrix[index][column + desp] == c) {
+				if(!white) {
+					prev++;
+				} else {
+					next++;
+				}
+				if((prev + (next > 0 ? next : -1) + 1) >= 4)
+					return true;
+			} else if(matrix[index][column + desp] == '-') {
+				white = true;
+			} else {
+				prev = next = 0;
+				white = false;
+			}
+		}
+		return false;
+	}
+	
+	public static int numUpDiagonalsCanWin(char [][] matrix, char c) {
+		int cont = 0;
+		for (int row = matrix.length - 1; canUp(row); row--) {
+			if(canWinInUpDiagonal(matrix, row, 0, c))
+				cont++;
+		}
+		for (int column = 1; canRigth(column, matrix[0].length); column++) {
+			if(canWinInUpDiagonal(matrix, matrix.length - 1, column, c))
+				cont++;
+		}
+		return cont;
+	}
+	
+	public static boolean canWinInUpDiagonal(char [][] matrix, int row, int column, char c) {
+		int prev = 0, next = 0;
+		boolean white = false;
+		for (int index = row, desp = 0; index >= 0 && (column + desp) < matrix[row].length; index--, desp++) {
+			if(matrix[index][column + desp] == c) {
+				if(!white) {
+					prev++;
+				} else {
+					next++;
+				}
+				if((prev + (next > 0 ? next : -1) + 1) >= 4)
+					return true;
+			} else if(matrix[index][column + desp] == '-') {
+				white = true;
+			} else {
+				prev = next = 0;
+				white = false;
+			}
+		}
+		return false;
 	}
 }

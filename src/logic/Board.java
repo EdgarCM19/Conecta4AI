@@ -70,7 +70,7 @@ public class Board {
 	}
 	
 	public boolean canAdd(int column) {
-		return pieces[column] < board.length;
+		return pieces[column] < board.length - 1;
 	}
 	
 	public void print() {

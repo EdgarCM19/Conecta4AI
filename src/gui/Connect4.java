@@ -4,14 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Random;
 
 import com.golden.gamedev.GameEngine;
 import com.golden.gamedev.GameObject;
 
 import AI.Algorithm;
 import AI.Evaluation;
-import AI.Node;
+import gui.components.Button;
 import logic.GameLogic;
 
 public class Connect4 extends GameObject {
@@ -21,6 +20,10 @@ public class Connect4 extends GameObject {
 	//IMAGES
 	private BufferedImage fondo;
 	private BufferedImage board;
+	private BufferedImage win, lose, tie;
+	
+	
+	Button back_btn;
 	
 	//BOARD VARIABLES
 	private final int BORDER = 25;
@@ -35,18 +38,28 @@ public class Connect4 extends GameObject {
 	private int board_x, board_y;
 	private int pointer_column, pointer_column_ai;
 	
-	private boolean throwed;
+	private boolean throwed, finished;
+	private char winner;
 	
 	
 	public Connect4(GameEngine parent) {
 		super(parent);
 		game = new GameLogic();
+		finished = false;
+		winner = '-';
 	}
 
 	@Override
 	public void initResources() {
 		fondo = getImage(ResouresPaths.BG_GAME);
 		board = getImage(ResouresPaths.BOARD);
+		win = getImage(ResouresPaths.WIN);
+		lose = getImage(ResouresPaths.LOSE);
+		tie = getImage(ResouresPaths.TIE);
+		
+		BufferedImage temp = getImage(ResouresPaths.BACK);
+		back_btn = new Button(temp, (getWidth() / 2) - (temp.getWidth() / 2), (getHeight()/ 2) - (temp.getHeight() / 2));
+		
 		board_x = (getWidth() / 2) - (board.getWidth() / 2);
 		board_y = (getHeight()/ 2) - (board.getHeight() / 2);
 	}
@@ -68,6 +81,23 @@ public class Connect4 extends GameObject {
 						board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
 			}
 		}
+		if(finished) {
+			switch (winner) {
+			case 'P': //Ganar
+				g.drawImage(win, 0, 0, null);
+				break;
+			case 'A': //Perder
+				g.drawImage(lose, 0, 0, null);
+				break;
+			case 'E': //Empate
+				g.drawImage(tie, 0, 0, null);
+				break;
+			default:
+				break;
+			}
+			back_btn.render(g);
+		}
+		//render boton
 	}
 
 	@Override
@@ -79,54 +109,45 @@ public class Connect4 extends GameObject {
 			if(click()) {
 				if(game.board.addPiece(pointer_column, 'P')) {
 					throwed = true;
-					System.out.println(Evaluation.closeToWin(game.board.board, 'P'));
 					pointer_column = -1;
-					if(Evaluation.isMeta(game.board)) {
-						System.out.println("Ganaste");
+					if(Evaluation.isMeta(game.board) == 'P') {
+						finished = true;
+						winner = 'P';
+						System.out.println("Ganaste pto");
 						System.out.println("[FINAL]>");
 						System.out.println(game.board);
-						parent.nextGameID = 0;
-						finish();
+						
 					}
 				}
 			}
 		}
+		if(finished) {
+			if(back_btn.click(getMouseX(), getMouseY())) {
+				end();
+			}
+		}
 	}
 	
-	private void tryT(Graphics2D g) {
-		
-		/*
-		while(true) {
-			Random rnd = new Random();
-			int column = rnd.nextInt(7);
-			pointer_column_ai = column;
-			if(game.board.addPiece(column, 'A')) {
-				System.out.println(Evaluation.evaluation(game.board, 'A'));
-				if(Evaluation.isMeta(game.board)) {
-					System.out.println("Te gano la AI");
-					parent.nextGameID = 0;
-					finish();
-				}
-				Node temp = new Node(game.board, 0, -1);
-				temp.createTreeN(temp, 0, 'A', 1);
-				temp.printNodeTree(temp);
-				break;
-			}
-		} */
-		
+	private void end() {
+		parent.nextGameID = 0;
+		finish();
+	}
+	
+	private void tryT(Graphics2D g) {		
 		Algorithm alg = new Algorithm(game.board);
-		//Node temp = alg.podaAlfaBeta(game.board);
-		//System.out.println("[NEW]>" + temp);
-		//System.out.println(temp.nodes.size());
 		if(game.board.addPiece(alg.poda(), 'A')) {
-			//System.out.println(Evaluation.evaluation(game.board, 'A'));
-			//game.printTree(game.board);
-			if(Evaluation.isMeta(game.board)) {
+			char eval = Evaluation.isMeta(game.board); 
+			if(eval == 'A') {
 				System.out.println("Te gano la AI");
 				System.out.println("[FINAL]>");
 				System.out.println(game.board);
-				parent.nextGameID = 0;
-				finish();
+				finished = true;
+				winner = 'A';
+			} else if(eval == 'E'){
+				finished = true;
+				winner = 'E';
+				System.out.println("Empate");
+				
 			}
 		}
 	}

@@ -5,17 +5,25 @@ import logic.Board;
 public class Evaluation {
 	
 	private final static float alpha1 = 0.15f; //Filas
-	private final static float alpha2 = 0.13f; //Columnas
-	private final static float alpha3 = 0.25f; //Diagonal sup
-	private final static float alpha4 = 0.25f; //Diagonal inf
-	private final static float alpha5 = 0.2f;
+	private final static float alpha2 = 0.15f; //Columnas
+	private final static float alpha3 = 0.2f; //Diagonal sup
+	private final static float alpha4 = 0.2f; //Diagonal inf
+	private final static float alpha5 = 0.3f; //Close to win
 	
 	//Funciones de evaluación.
 	public static float evaluation(Board data, char player) {
-		return ((alpha1 * free_rows(data.board, player) / 6) +
-				(alpha2 * free_columns(data.board, player) / 7) +
-				(alpha3 * diagonals_down(data.board, player) / 6) +
-				(alpha4 * diagonals_up(data.board, player) / 6));
+		char other = (player == 'A') ? 'P' : 'A';
+		return ((alpha1 * free_rows(data.board, player)) +
+				(alpha2 * free_columns(data.board, player)) +
+				(alpha3 * diagonals_down(data.board, player)) +
+				(alpha4 * diagonals_up(data.board, player)) +
+				(alpha5 * closeToWin(data.board, player)))
+				-
+				((alpha1 * free_rows(data.board, other)) +
+				(alpha2 * free_columns(data.board, other)) +
+				(alpha3 * diagonals_down(data.board, other)) +
+				(alpha4 * diagonals_up(data.board, other)) +
+				(alpha5 * closeToWin(data.board, other))) + ((isMeta(data) == player) ? 5f : 0f);
 	}
 	
 	public static int followingPieces(char [][] matrix, int row, int column, int mode) {
@@ -59,8 +67,6 @@ public class Evaluation {
 		}
 		return cont;
 	}
-	
-	
 	
 	public static int closeToWin(char [][] matrix, char player) {
 		char other = player == 'A' ? 'P' : 'A';
@@ -124,12 +130,6 @@ public class Evaluation {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
 	//[x] filas disponibles
 	//Cuenta cuantas filas cuentan con el espacio minimo para ganar
 	public static int free_rows(char [][] matrix, char c) {
@@ -153,7 +153,6 @@ public class Evaluation {
 			}
 		}
 		cont = max(pa, cont);
-		//System.out.println("Salida de " + cont);
 		return cont;
 	}
 	
@@ -164,7 +163,6 @@ public class Evaluation {
 			if(max_for_column(matrix,column, c) >= 4)
 				cont++;
 		}
-		//System.out.println("Filas libres para :" + c + " = " + cont);
 		return cont;
 	}
 	
@@ -178,7 +176,6 @@ public class Evaluation {
 				pa=0;
 			}	
 		}
-		//System.out.println("Salida de " + cont);
 		return cont;
 	}
 	
@@ -189,7 +186,6 @@ public class Evaluation {
 			if(max_for_diagonals_down(matrix,colum,c)>0)
 				cont++;
 		}
-		//System.out.println("Filas libres el diagonal desendente para :" + c + " = " + cont);
 		return cont;
 	}
 	
@@ -209,7 +205,6 @@ public class Evaluation {
 			if(max_for_diadonals_up(matrix,colm,c)>0)
 				cont++;
 		}
-		//System.out.println("Filas libres el diagonal acendente para :" + c + " = " + cont);
 		return cont;
 	}
 	private static int max_for_diadonals_up(char[][] matrix, int colm, char c) {
@@ -228,8 +223,8 @@ public class Evaluation {
 	private static int max(int a, int b) {
 		return (a > b) ?  a : b;
 	}
-	
 	//Funciones para ver si es meta.
+	/*
 	public static boolean isMeta(Board data) {		
 		for(int column = 0; column < data.board[0].length; column++) {
 			for(int row = 0; row < data.board.length; row++) {
@@ -261,6 +256,40 @@ public class Evaluation {
 			if(c < data.board.length)
 				return false;
 		return true;
+	}
+	*/
+	
+	public static char isMeta(Board data) {		
+		for(int column = 0; column < data.board[0].length; column++) {
+			for(int row = 0; row < data.board.length; row++) {
+				if(data.board[row][column] != '-') {
+					if(canRigth(column, data.board[0].length)) {
+						if(evaluateR(data.board, row, column))
+							return data.board[row][column];
+						if(canDown(row, data.board.length)) {
+							if(evaluateD(data.board, row, column))
+								return data.board[row][column];
+							if(evaluateDR(data.board, row, column))
+								return data.board[row][column];
+							
+						}
+						if(canUp(row)) {
+							if(evaluateUR(data.board, row, column))
+								return data.board[row][column];
+						}
+					} else {
+						if(canDown(row, data.board.length)) {
+							if(evaluateD(data.board, row, column))
+								return data.board[row][column];
+						}
+					}
+				}
+			}
+		}
+		for(int c : data.pieces)
+			if(c < data.board.length)
+				return '-';
+		return 'E';
 	}
 	
 	private static boolean canUp(int index) {
@@ -309,7 +338,7 @@ public class Evaluation {
 	
 	private static boolean eveluteDiagonalEspaceUp(char[][] matrix,int row,int column,char c,char player) {
 		for(int i = 0; i < 4; i++) {
-			if(matrix[row - i][column + i] != c && matrix[row - i][column + i] !=player)
+			if(matrix[row - i][column + i] != c && matrix[row - i][column + i] != player)
 				return false;
 		}
 		return true;

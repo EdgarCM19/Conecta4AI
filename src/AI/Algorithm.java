@@ -1,5 +1,6 @@
 package AI;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import logic.Board;
@@ -20,7 +21,7 @@ public class Algorithm {
 	public int bestMov;
 	
 	public Node podaAlfaBeta(Board b) {
-		return podaAlfaBeta(new Node(b, 0, -1), nI, pI, 3, is_max);
+		return podaAlfaBeta(new Node(b, 0, -1), nI, pI, 4, is_max);
 	}
 	
 	
@@ -28,7 +29,7 @@ public class Algorithm {
 		float new_alpha;
 		float new_beta;
 		char player = max ? 'A' : 'P';
-		if(Evaluation.isMeta(J.data) || horizont == 0) {
+		if(Evaluation.isMeta(J.data) != '-' || horizont == 0) {
 			//System.out.println(J);
 			J.factor = Evaluation.evaluation(J.data, player);
 			return J;
@@ -73,38 +74,31 @@ public class Algorithm {
 	
 	public int poda() {
 		Node temp = new Node(board, 0, -1);
-		temp.createTreeN(temp, 0, 'P', 4);
+		temp.createTreeN(temp, 0, 'P', 6);
 		float pod = poda(temp, nI, pI, is_max);
 		int i = 0;
+		System.out.println("Results: ");
+		for(Node n : temp.nodes) {
+			System.out.println(">" + n.factor);
+		}
+		//ArrayList<Integer> posibles = new ArrayList<Integer>();
 		for(i = 0; i < temp.nodes.size(); i++) {
 			if(temp.nodes.get(i).factor == pod) {
-				break; 
+				return i;
+				//posibles.add(i); 
 			}
 		}
+		//i = new Random().nextInt(7);
+		//i = posibles.get(new Random().nextInt(posibles.size()));
 		System.out.println("[MOV]>" + i);
 		return i;
 	}
-	
-	
-	public int alfaBeta() {
-		float alpha = -100000;
-		Node temp = new Node(board, 0, -1);
-		temp.createTreeN(temp, 0, 'A', 4);
-		int bM = 0;
-		for(int i = 0; i < temp.nodes.size(); i++) {
-			float t_alpha = alpha;
-			alpha = Math.max(alpha, poda(temp.nodes.get(i), alpha, 1000, false));
-			if(alpha != t_alpha)
-				bM = i;
-		}
-		System.out.println(bM);
-		return bM;
-		
-	}
 		
 	public float poda(Node J, float alpha, float beta, boolean max) {
-		if(J.nodes.size() == 0 || Evaluation.isMeta(J.data)) {
+		if(J.nodes.size() == 0 || Evaluation.isMeta(J.data) != '-') {
 			J.setFactor(Evaluation.evaluation(J.data, max ? 'A' : 'P'));
+			System.out.println("[No se xd]>" + max);
+			System.out.println(J);
 			return J.factor;
 		}
 		if(max) { //MAX

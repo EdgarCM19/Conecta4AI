@@ -118,7 +118,7 @@ public class Node {
     }
     
     public void createTreeN(Node node, int depth, char player, int horizont) {
-    	if(node.depth < horizont && !Evaluation.isMeta(node.data)) {
+    	if(node.depth < horizont && Evaluation.isMeta(node.data) == '-') {
     		char c = (player == 'A') ? 'P' : 'A';
     		for (int column = 0; column < node.data.pieces.length; column++) {
 				if(node.data.canAdd(column)) {
@@ -126,7 +126,7 @@ public class Node {
 					temp.addPiece(column, c);
 					Node ntemp = new Node(temp, depth + 1, column); 
 					node.nodes.add(ntemp);
-					if(!Evaluation.isMeta(ntemp.data)) {
+					if(Evaluation.isMeta(ntemp.data) == '-') {
 						createTreeN(ntemp, depth + 1, c, horizont);
 					} 
 				}
@@ -171,6 +171,6 @@ public class Node {
     
     @Override
     public String toString() {
-    	return /*"Tablero: \n" + data.toString() + */ "\n Profundidad: " + this.depth + "\nFACTOR>" + factor; 
+    	return "Tablero: \n" + data.toString() + "\n Profundidad: " + this.depth + "\nFACTOR>" + factor; 
     }
 }

@@ -72,15 +72,6 @@ public class Connect4 extends GameObject {
 		g.drawImage(fondo, 0, 0, null);
 		g.drawImage(board, board_x, board_y, null);
 		drawPieces(g);
-		if(throwed) {
-			tryT(g);
-		} else {
-			if(pointer_column != -1) {
-				g.setColor(Color.RED);
-				g.fillOval(board_x + BORDER + PAD_X+ (pointer_column * TILE_SIZE_X) , 
-						board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
-			}
-		}
 		if(finished) {
 			switch (winner) {
 			case 'P': //Ganar
@@ -96,8 +87,17 @@ public class Connect4 extends GameObject {
 				break;
 			}
 			back_btn.render(g);
+		} else {
+			if(throwed) {
+				tryT(g);
+			} else {
+				if(pointer_column != -1) {
+					g.setColor(Color.RED);
+					g.fillOval(board_x + BORDER + PAD_X+ (pointer_column * TILE_SIZE_X) , 
+							board_y - TILE_SIZE_Y - (BORDER / 2), TOKEN_SIZE, TOKEN_SIZE);
+				}
+			}
 		}
-		//render boton
 	}
 
 	@Override
@@ -112,17 +112,14 @@ public class Connect4 extends GameObject {
 		} else {
 			if(inBoard()) {
 				pointer_column = calculatePointerColumn();
-				if(click()) {
-					if(game.board.addPiece(pointer_column, 'P')) {
-						throwed = true;
-						pointer_column = -1;
+				if(click()) {			
+					if(game.p1.throwPiece(pointer_column)) {
 						if(Evaluation.isMeta(game.board) == 'P') {
 							finished = true;
-							winner = 'P';
-							System.out.println("Ganaste pto");
-							System.out.println("[FINAL]>");
-							System.out.println(game.board);
+							winner = 'P';							
 						}
+						throwed = true;
+						pointer_column = -1;
 					}
 				}
 			}
@@ -134,21 +131,18 @@ public class Connect4 extends GameObject {
 		finish();
 	}
 	
-	private void tryT(Graphics2D g) {		
-		Algorithm alg = new Algorithm(game.board);
-		if(game.board.addPiece(alg.poda(), 'A')) {
-			char eval = Evaluation.isMeta(game.board); 
-			if(eval == 'A') {
-				System.out.println("Te gano la AI");
-				System.out.println("[FINAL]>");
-				System.out.println(game.board);
-				finished = true;
-				winner = 'A';
-			} else if(eval == 'E'){
-				finished = true;
-				winner = 'E';
-				System.out.println("Empate");
-				
+	private void tryT(Graphics2D g) {	
+		if(!finished) {
+			Algorithm alg = new Algorithm(game.board);
+			if(game.p2.throwPiece(alg.poda())) {
+				char eval = Evaluation.isMeta(game.board); 
+				if(eval == 'A') {					
+					finished = true;
+					winner = 'A';
+				} else if(eval == 'E'){
+					finished = true;
+					winner = 'E';									
+				}
 			}
 		}
 	}

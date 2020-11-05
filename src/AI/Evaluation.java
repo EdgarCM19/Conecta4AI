@@ -521,6 +521,8 @@ public class Evaluation {
 		return cont/4;
 	}
 	
+	
+	
 	public static boolean canWinInUpDiagonal(char [][] matrix, int row, int column, char c) {
 		int prev = 0, next = 0;
 		boolean white = false;

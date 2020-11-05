@@ -21,14 +21,15 @@ public class Menu extends GameObject {
 	@Override
 	public void initResources() {
 		fondo = getImage(ResouresPaths.MENU_BG);
-		btn_start = new Button(getImage(ResouresPaths.BTN_START), 0, 0);
+		BufferedImage temp = getImage(ResouresPaths.PLAY);
+		btn_start = new Button(temp, (getWidth() / 2) - (temp.getWidth() / 2), (getHeight()/ 2) - (temp.getHeight() / 2) - 100);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
 		g.clearRect(0, 0, getWidth(), getHeight());
 		g.drawImage(fondo, 0, 0, null);
-		btn_start.render(g, 100, 100);
+		btn_start.render(g);
 	}
 
 	@Override

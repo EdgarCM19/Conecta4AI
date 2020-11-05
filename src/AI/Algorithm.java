@@ -21,7 +21,8 @@ public class Algorithm {
 	public int bestMov;
 	
 	public Node podaAlfaBeta(Board b) {
-		return podaAlfaBeta(new Node(b, 0, -1), nI, pI, 4, is_max);
+		System.out.println("Best en algo>" + bestMov);
+		return podaAlfaBeta(new Node(b, 0, -1), nI, pI, 5, is_max);
 	}
 	
 	
@@ -30,7 +31,6 @@ public class Algorithm {
 		float new_beta;
 		char player = max ? 'A' : 'P';
 		if(Evaluation.isMeta(J.data) != '-' || horizont == 0) {
-			//System.out.println(J);
 			J.factor = Evaluation.evaluation(J.data, player);
 			return J;
 		}
@@ -77,19 +77,12 @@ public class Algorithm {
 		temp.createTreeN(temp, 0, 'P', 6);
 		float pod = poda(temp, nI, pI, is_max);
 		int i = 0;
-		System.out.println("Results: ");
-		for(Node n : temp.nodes) {
-			System.out.println(">" + n.factor);
-		}
-		//ArrayList<Integer> posibles = new ArrayList<Integer>();
+		System.out.println("El best mov>" + bestMov);
 		for(i = 0; i < temp.nodes.size(); i++) {
 			if(temp.nodes.get(i).factor == pod) {
-				return i;
-				//posibles.add(i); 
+				return i; 
 			}
 		}
-		//i = new Random().nextInt(7);
-		//i = posibles.get(new Random().nextInt(posibles.size()));
 		System.out.println("[MOV]>" + i);
 		return i;
 	}
@@ -97,8 +90,6 @@ public class Algorithm {
 	public float poda(Node J, float alpha, float beta, boolean max) {
 		if(J.nodes.size() == 0 || Evaluation.isMeta(J.data) != '-') {
 			J.setFactor(Evaluation.evaluation(J.data, max ? 'A' : 'P'));
-			System.out.println("[No se xd]>" + max);
-			System.out.println(J);
 			return J.factor;
 		}
 		if(max) { //MAX

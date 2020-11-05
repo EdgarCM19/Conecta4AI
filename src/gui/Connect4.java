@@ -104,26 +104,27 @@ public class Connect4 extends GameObject {
 	public void update(long time) {
 		throwed = false;
 		pointer_column = pointer_column_ai -1;
-		if(inBoard()) {
-			pointer_column = calculatePointerColumn();
-			if(click()) {
-				if(game.board.addPiece(pointer_column, 'P')) {
-					throwed = true;
-					pointer_column = -1;
-					if(Evaluation.isMeta(game.board) == 'P') {
-						finished = true;
-						winner = 'P';
-						System.out.println("Ganaste pto");
-						System.out.println("[FINAL]>");
-						System.out.println(game.board);
-						
+		if(finished) {
+			if(click())
+				if(back_btn.click(getMouseX(), getMouseY())) 
+					end();
+			
+		} else {
+			if(inBoard()) {
+				pointer_column = calculatePointerColumn();
+				if(click()) {
+					if(game.board.addPiece(pointer_column, 'P')) {
+						throwed = true;
+						pointer_column = -1;
+						if(Evaluation.isMeta(game.board) == 'P') {
+							finished = true;
+							winner = 'P';
+							System.out.println("Ganaste pto");
+							System.out.println("[FINAL]>");
+							System.out.println(game.board);
+						}
 					}
 				}
-			}
-		}
-		if(finished) {
-			if(back_btn.click(getMouseX(), getMouseY())) {
-				end();
 			}
 		}
 	}

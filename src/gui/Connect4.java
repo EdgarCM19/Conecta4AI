@@ -136,14 +136,6 @@ public class Connect4 extends GameObject {
 			Algorithm alg = new Algorithm(game.board);
 			if(game.p2.throwPiece(alg.poda())) {
 				char eval = Evaluation.isMeta(game.board); 
-				System.out.println("++++++++++++");
-				//System.out.println("DR>" + Evaluation.freeDR(game.board.board, 'A'));
-				//System.out.println("UR>" + Evaluation.freeUR(game.board.board, 'A'));
-				//System.out.println("CLOSE>" + Evaluation.closeToWin(game.board.board, 'P'));
-				//System.out.println("N_R_CAN_WIN>" + Evaluation.numRowsCanWin(game.board.board, 'P'));
-				//System.out.println("N_C_CAN_WIN>" + Evaluation.numColumnsCanWin(game.board.board, 'P'));
-				//System.out.println("N_DR_CAN_WIN>" + Evaluation.numDownDiagonalsCanWin(game.board.board, 'P'));
-				//System.out.println("N_UR_CAN_WIN>" + Evaluation.numUpDiagonalsCanWin(game.board.board, 'P'));
 				if(eval == 'A') {					
 					finished = true;
 					winner = 'A';

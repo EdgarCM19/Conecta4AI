@@ -6,7 +6,7 @@ import logic.Board;
 public class Algorithm {
 	
 	private Board board;
-	private boolean is_max = true; //true = min | false = max
+	private boolean is_max = false; //true = min | false = max
 	
 	private final float nI = -1000000f; 
 	private final float pI = 1000000f;
@@ -19,7 +19,7 @@ public class Algorithm {
 	
 	public int poda() {
 		Node temp = new Node(board, 0, -1);
-		temp.createTreeN(temp, 0, 'P', 6);
+		temp.createTreeN(temp, 0, 'A', 5);
 		poda(temp, nI, pI, is_max);
 		return temp.best;
 	}
@@ -52,7 +52,7 @@ public class Algorithm {
 				if(ant != t_beta)					
 					J.best = Jk.mov;
 				if(t_beta <= alpha) {
-					bestMov = Jk.mov;
+					J.best = Jk.mov;
 					break;
 				}
 			}
